@@ -1,0 +1,1095 @@
+<!--
+
+ OpenCart Ukrainian Community
+
+ LICENSE
+
+ This source file is subject to the GNU General Public License, Version 3
+ It is also available through the world-wide-web at this URL:
+ http://www.gnu.org/copyleft/gpl.html
+ If you did not receive a copy of the license and are unable to
+ obtain it through the world-wide-web, please send an email
+ to license@opencart.ua so we can send you a copy immediately.
+
+ @category   OpenCart
+ @package    OCU Waitlist
+ @copyright  Copyright (c) 2011 Eugene Kuligin by OpenCart Ukrainian Community (http://opencart.ua)
+ @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License, Version 3
+
+
+ @category   OpenCart
+ @package    OCU Waitlist
+ @copyright  Copyright (c) 2011 Eugene Kuligin by OpenCart Ukrainian Community (http://opencart.ua)
+ @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License, Version 3
+
+-->
+
+
+<modification>
+
+    <id>OCU Waitlist</id>
+    <version>1.0</version>
+    <vqmver>2.1.5</vqmver>
+    <author>Eugene Kuligin by Ukrainian OpenCart Development Team</author>
+    <website>http://www.opencart.ua</website>
+    <email>support@opencart.ua</email>
+
+    <!-- sql:start -->
+
+        <!-- DB changes:
+
+            CREATE TABLE IF NOT EXISTS `waitlist` (
+              `customer_id` int(11) NOT NULL,
+              `product_id` int(11) NOT NULL,
+              `date_added` datetime NOT NULL,
+              PRIMARY KEY  (`customer_id`,`product_id`)
+            ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+        -->
+
+    <!-- sql:end -->
+
+    <!-- catalog:start -->
+
+        <!-- controller:start -->
+
+            <file name="catalog/controller/product/product.php">
+
+                <!-- replace cart button on main product page -->
+                <operation>
+                    <search position="before">
+                        <![CDATA[
+                            $this->load->model('tool/image');
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available']       = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']          = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist']       = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']            = $this->config->get('waitlist_enabled');
+
+                            $this->data['product_quantity']            = $product_info['quantity'];
+                            $this->data['product_already_in_waitlist'] = ($this->model_account_waitlist->issetRow($product_info['product_id'],
+                                                                                                                  $this->customer->getId()) ? true : false);
+                        ]]>
+                    </add>
+                </operation>
+
+                <!-- replace cart button of related products on main product page -->
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][] = array(
+                                'quantity'            => $result['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($result['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on category page -->
+            <file name="catalog/controller/product/category.php">
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][] = array(
+                                'quantity'            => $result['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($result['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on manufacturer page -->
+            <file name="catalog/controller/product/manufacturer.php">
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][] = array(
+                                'quantity'            => $result['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($result['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on search page -->
+            <file name="catalog/controller/product/search.php">
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][] = array(
+                                'quantity'            => $result['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($result['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on special page -->
+            <file name="catalog/controller/product/special.php">
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][] = array(
+                                'quantity'            => $result['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($result['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on compare page -->
+            <file name="catalog/controller/product/compare.php">
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][$product_id] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][$product_id] = array(
+                                'quantity'            => $product_info['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($product_info['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button in bestseller module -->
+            <file name="catalog/controller/module/bestseller.php">
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][] = array(
+                                'quantity'            => $result['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($result['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button in featured module -->
+            <file name="catalog/controller/module/featured.php">
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][] = array(
+                                'quantity'            => $product_info['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($product_info['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button in special module -->
+            <file name="catalog/controller/module/special.php">
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][] = array(
+                                'quantity'            => $result['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($result['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button in latest module -->
+            <file name="catalog/controller/module/latest.php">
+                <operation>
+                    <search position="replace">
+                        <![CDATA[
+                            $this->data['products'][] = array(
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->language->load('account/waitlist');
+                            $this->load->model('account/waitlist');
+
+                            $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                            $this->data['text_not_available']    = $this->language->get('text_not_available');
+                            $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                           $this->url->link('account/waitlist', '', 'SSL'));
+
+                            $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                            $this->data['products'][] = array(
+                                'quantity'            => $result['quantity'],
+                                'already_in_waitlist' => ($this->model_account_waitlist->issetRow($result['product_id'], $this->customer->getId()) ? true :false),
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+
+
+            <!-- add waitlist link to account page -->
+            <file name="catalog/controller/account/account.php">
+                <operation>
+                    <search position="after">
+                        <![CDATA[
+                            $this->data['wishlist'] = $this->url->link('account/wishlist');
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->data['waitlist_enabled'] = $this->config->get('waitlist_enabled');
+
+                            $this->language->load('account/waitlist');
+                            $this->data['waitlist'] = $this->url->link('account/waitlist', '', 'SSL');
+                            $this->data['text_waitlist'] = $this->language->get('text_waitlist');
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- add waitlist link to account module -->
+            <file name="catalog/controller/module/account.php">
+                <operation>
+                    <search position="after">
+                        <![CDATA[
+                            $this->data['wishlist'] = $this->url->link('account/wishlist');
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->data['waitlist_enabled'] = $this->config->get('waitlist_enabled');
+
+                            $this->language->load('account/waitlist');
+                            $this->data['waitlist'] = $this->url->link('account/waitlist', '', 'SSL');
+                            $this->data['text_waitlist'] = $this->language->get('text_waitlist');
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- add waitlist link to account module -->
+            <file name="catalog/controller/common/footer.php">
+                <operation>
+                    <search position="after">
+                        <![CDATA[
+                            $this->data['wishlist'] = $this->url->link('account/wishlist', '', 'SSL');
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            $this->data['waitlist_enabled'] = $this->config->get('waitlist_enabled');
+
+                            $this->language->load('account/waitlist');
+                            $this->data['waitlist'] = $this->url->link('account/waitlist', '', 'SSL');
+                            $this->data['text_waitlist'] = $this->language->get('text_waitlist');
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+        <!-- controller:end -->
+
+        <!-- template:start -->
+
+            <!-- add custom js -->
+            <file name="catalog/view/theme/default/template/common/header.tpl">
+                <operation error="skip">
+                    <search position="after">
+                        <![CDATA[
+                            <script type="text/javascript" src="catalog/view/javascript/common.js"></script>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <script type="text/javascript" src="catalog/view/javascript/waitlist.js"></script>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <file name="catalog/view/theme/default/template/product/product.tpl">
+
+                <!-- replace cart button of related products on main product page -->
+
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                          <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                            <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                            <div class="waitlist-add">
+                              <?php if ($product['already_in_waitlist']) { ?>
+                                <?php echo $text_already_waitlist; ?>
+                              <?php } else { ?>
+                                <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                              <?php } ?>
+                            </div>
+                          <?php } else { ?>
+                            <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                          <?php } ?>
+                        ]]>
+                    </add>
+                </operation>
+
+                <!-- replace cart button on main product page -->
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <?php echo $text_qty; ?>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[]]>
+                    </add>
+                </operation>
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <input type="text" name="quantity" size="2" value="<?php echo $minimum; ?>" />
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[]]>
+                    </add>
+                </operation>
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            &nbsp;<a id="button-cart" class="button"><span><?php echo $button_cart; ?></span></a>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                          <?php if (!$product_quantity && $waitlist_enabled) { ?>
+                            <div class="waitlist-not-available" style="float:none!important"><?php echo $text_not_available;?></div>
+                            <div class="waitlist-add" style="float:none!important">
+                              <?php if ($product_already_in_waitlist) { ?>
+                                <?php echo $text_already_waitlist; ?>
+                              <?php } else { ?>
+                                <a onclick="addToWaitList('<?php echo $product_id; ?>');"><?php echo $text_notify_available; ?></a>
+                              <?php } ?>
+                            </div>
+                          <?php } else { ?>
+                            <?php echo $text_qty; ?>
+                            <input type="text" name="quantity" size="2" value="<?php echo $minimum; ?>" />
+                            &nbsp;<a id="button-cart" class="button"><span><?php echo $button_cart; ?></span></a>
+                          <?php } ?>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on category page -->
+            <file name="catalog/view/theme/default/template/product/category.tpl">
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <div class="cart">
+                              <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                                <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                                <div class="waitlist-add">
+                                  <?php if ($product['already_in_waitlist']) { ?>
+                                    <?php echo $text_already_waitlist; ?>
+                                  <?php } else { ?>
+                                    <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                                  <?php } ?>
+                                </div>
+                              <?php } else { ?>
+                                <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                              <?php } ?>
+                            </div>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on manufacturer_info page -->
+            <file name="catalog/view/theme/default/template/product/manufacturer_info.tpl">
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <div class="cart">
+                              <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                                <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                                <div class="waitlist-add">
+                                  <?php if ($product['already_in_waitlist']) { ?>
+                                    <?php echo $text_already_waitlist; ?>
+                                  <?php } else { ?>
+                                    <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                                  <?php } ?>
+                                </div>
+                              <?php } else { ?>
+                                <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                              <?php } ?>
+                            </div>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on search page -->
+            <file name="catalog/view/theme/default/template/product/search.tpl">
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <div class="cart">
+                              <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                                <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                                <div class="waitlist-add">
+                                  <?php if ($product['already_in_waitlist']) { ?>
+                                    <?php echo $text_already_waitlist; ?>
+                                  <?php } else { ?>
+                                    <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                                  <?php } ?>
+                                </div>
+                              <?php } else { ?>
+                                <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                              <?php } ?>
+                            </div>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on special page -->
+            <file name="catalog/view/theme/default/template/product/special.tpl">
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <div class="cart">
+                              <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                                <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                                <div class="waitlist-add">
+                                  <?php if ($product['already_in_waitlist']) { ?>
+                                    <?php echo $text_already_waitlist; ?>
+                                  <?php } else { ?>
+                                    <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                                  <?php } ?>
+                                </div>
+                              <?php } else { ?>
+                                <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                              <?php } ?>
+                            </div>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button on compare page -->
+            <file name="catalog/view/theme/default/template/product/compare.tpl">
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <td><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></td>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <td>
+                              <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                                <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                                <div class="waitlist-add">
+                                  <?php if ($product['already_in_waitlist']) { ?>
+                                    <?php echo $text_already_waitlist; ?>
+                                  <?php } else { ?>
+                                    <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                                  <?php } ?>
+                                </div>
+                              <?php } else { ?>
+                                <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                              <?php } ?>
+                            </td>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button in bestseller module -->
+            <file name="catalog/view/theme/default/template/module/bestseller.tpl">
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <div class="cart">
+                              <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                                <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                                <div class="waitlist-add">
+                                  <?php if ($product['already_in_waitlist']) { ?>
+                                    <?php echo $text_already_waitlist; ?>
+                                  <?php } else { ?>
+                                    <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                                  <?php } ?>
+                                </div>
+                              <?php } else { ?>
+                                <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                              <?php } ?>
+                            </div>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button in special module -->
+            <file name="catalog/view/theme/default/template/module/special.tpl">
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <div class="cart">
+                              <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                                <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                                <div class="waitlist-add">
+                                  <?php if ($product['already_in_waitlist']) { ?>
+                                    <?php echo $text_already_waitlist; ?>
+                                  <?php } else { ?>
+                                    <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                                  <?php } ?>
+                                </div>
+                              <?php } else { ?>
+                                <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                              <?php } ?>
+                            </div>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button in featured module -->
+            <file name="catalog/view/theme/default/template/module/featured.tpl">
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <div class="cart">
+                              <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                                <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                                <div class="waitlist-add">
+                                  <?php if ($product['already_in_waitlist']) { ?>
+                                    <?php echo $text_already_waitlist; ?>
+                                  <?php } else { ?>
+                                    <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                                  <?php } ?>
+                                </div>
+                              <?php } else { ?>
+                                <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                              <?php } ?>
+                            </div>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- replace cart button in latest module -->
+            <file name="catalog/view/theme/default/template/module/latest.tpl">
+                <operation error="skip">
+                    <search position="replace">
+                        <![CDATA[
+                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <div class="cart">
+                              <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                                <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                                <div class="waitlist-add">
+                                  <?php if ($product['already_in_waitlist']) { ?>
+                                    <?php echo $text_already_waitlist; ?>
+                                  <?php } else { ?>
+                                    <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                                  <?php } ?>
+                                </div>
+                              <?php } else { ?>
+                                <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                              <?php } ?>
+                            </div>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- add waitlist link to account page -->
+            <file name="catalog/view/theme/default/template/account/account.tpl">
+                <operation error="skip">
+                    <search position="after">
+                        <![CDATA[
+                            <li><a href="<?php echo $wishlist; ?>"><?php echo $text_wishlist; ?></a></li>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <?php if ($waitlist_enabled) { ?>
+                                <li><a href="<?php echo $waitlist; ?>"><?php echo $text_waitlist; ?></a></li>
+                            <?php } ?>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- add waitlist link to account module -->
+            <file name="catalog/view/theme/default/template/module/account.tpl">
+                <operation error="skip">
+                    <search position="after">
+                        <![CDATA[
+                            <li><a href="<?php echo $wishlist; ?>"><?php echo $text_wishlist; ?></a></li>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <?php if ($waitlist_enabled) { ?>
+                                <li><a href="<?php echo $waitlist; ?>"><?php echo $text_waitlist; ?></a></li>
+                            <?php } ?>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+            <!-- add waitlist link to main footer -->
+            <file name="catalog/view/theme/default/template/common/footer.tpl">
+                <operation error="skip">
+                    <search position="after">
+                        <![CDATA[
+                            <li><a href="<?php echo $wishlist; ?>"><?php echo $text_wishlist; ?></a></li>
+                        ]]>
+                    </search>
+                    <add>
+                        <![CDATA[
+                            <?php if ($waitlist_enabled) { ?>
+                                <li><a href="<?php echo $waitlist; ?>"><?php echo $text_waitlist; ?></a></li>
+                            <?php } ?>
+                        ]]>
+                    </add>
+                </operation>
+            </file>
+
+        <!-- template:end -->
+
+    <!-- catalog:end -->
+
+    <!-- admin:start -->
+
+        <!-- model:start -->
+
+        <file name="admin/model/catalog/product.php">
+
+            <!-- mail notification when product edit -->
+            <operation>
+                <search position="after">
+                    <![CDATA[
+                        public function editProduct($product_id, $data) {
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        $this->load->model('tool/waitlist');
+                        $this->model_tool_waitlist->notify($product_id, $data);
+                    ]]>
+                </add>
+            </operation>
+
+            <!-- reset subscribes when product delete -->
+            <operation>
+                <search position="after">
+                    <![CDATA[
+                        public function deleteProduct($product_id) {
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        $this->load->model('tool/waitlist');
+                        $this->model_tool_waitlist->removeByProductId($product_id);
+                    ]]>
+                </add>
+            </operation>
+        </file>
+
+        <!-- reset subscribes when customer delete -->
+        <file name="admin/model/sale/customer.php">
+            <operation>
+                <search position="after">
+                    <![CDATA[
+                        public function deleteCustomer($customer_id) {
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        $this->load->model('tool/waitlist');
+                        $this->model_tool_waitlist->removeByCustomerId($customer_id);
+                    ]]>
+                </add>
+            </operation>
+        </file>
+
+        <!-- extendet functions -->
+
+        <!-- mail notification when product edit -->
+        <file name="admin/model/catalog/product_manager.php">
+
+            <operation>
+                <search position="after">
+                    <![CDATA[
+                    	public function editProduct($product_id, $data) {
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        if ($data['key'] == 'quantity') {
+                            $data['quantity'] = (int)$data['value'];
+                            $this->load->model('tool/waitlist');
+                            $this->model_tool_waitlist->notify($product_id, $data);
+                        }
+                    ]]>
+                </add>
+            </operation>
+
+        </file>
+
+        <!-- optional: replace cart button on browse page (product filter module) -->
+        <!--
+        <file name="catalog/controller/product/browse.php">
+            <operation>
+                <search position="replace">
+                    <![CDATA[
+                        $this->data['products'][] = array(
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        $this->language->load('account/waitlist');
+                        $this->load->model('account/waitlist');
+
+                        $this->data['text_notify_available'] = $this->language->get('text_notify_available');
+                        $this->data['text_not_available']    = $this->language->get('text_not_available');
+                        $this->data['text_already_waitlist'] = sprintf($this->language->get('text_already_waitlist'),
+                                                                       $this->url->link('account/waitlist', '', 'SSL'));
+
+                        $this->data['waitlist_enabled']      = $this->config->get('waitlist_enabled');
+
+                        $this->data['products'][] = array(
+                            'quantity'            => $result['quantity'],
+                            'already_in_waitlist' => ($this->model_account_waitlist->issetRow($result['product_id'], $this->customer->getId()) ? true :false),
+                    ]]>
+                </add>
+            </operation>
+        </file>
+
+        <file name="catalog/view/theme/default/template/product/browse.tpl">
+            <operation error="skip">
+                <search position="replace">
+                    <![CDATA[
+                        <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        <div class="cart">
+                          <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
+                            <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
+                            <div class="waitlist-add">
+                              <?php if ($product['already_in_waitlist']) { ?>
+                                <?php echo $text_already_waitlist; ?>
+                              <?php } else { ?>
+                                <a onclick="addToWaitList('<?php echo $product['product_id']; ?>');"><?php echo $text_notify_available; ?></a>
+                              <?php } ?>
+                            </div>
+                          <?php } else { ?>
+                            <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
+                          <?php } ?>
+                        </div>
+                    ]]>
+                </add>
+            </operation>
+        </file>
+        -->
+
+        <!-- optional: mail notification when leftover update -->
+        <!--
+        <file name="admin/model/tool/leftover.php">
+
+            <operation error="skip">
+                <search position="after">
+                    <![CDATA[
+                        function productsUpdate( $database, $products ) {
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        $this->load->model('tool/waitlist');
+                    ]]>
+                </add>
+            </operation>
+
+            <operation error="skip">
+                <search position="before">
+                    <![CDATA[
+                        $database->query("UPDATE `".DB_PREFIX."product` SET quantity = '{$this->quantity}' WHERE model = '{$product['model']}' AND supplier = '{$this->supplier}' LIMIT 1");
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        if ($this->quantity > 0) {
+                            $result = $database->query("SELECT product_id FROM `".DB_PREFIX."product` WHERE model = '{$product['model']}' AND supplier = '{$this->supplier}'");
+                            if ($result->num_rows) {
+                                foreach ($result->rows as $row) {
+                                    $data['quantity'] = (int) $this->quantity;
+                                    $this->model_tool_waitlist->notify($row['product_id'], $data);
+                                }
+                            }
+                        }
+                    ]]>
+                </add>
+            </operation>
+        </file>
+        -->
+
+        <!-- optional: mail notification on xml import -->
+        <!--
+        <file name="admin/model/tool/export.php">
+
+            <operation error="skip">
+                <search position="before">
+                    <![CDATA[
+                        $sql .= "DELETE FROM `".DB_PREFIX."product`;\n";
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        foreach ($products as $product) {
+                            if ($product['quantity'] > 0) {
+                                $this->load->model('tool/waitlist');
+                                $data['quantity'] = (int) $product['quantity'];
+                                $this->model_tool_waitlist->notify($product['product_id'], $data);
+                            }
+                        }
+                    ]]>
+                </add>
+            </operation>
+
+        </file>
+        -->
+
+        <!-- optional: remove undefined products from waitlist on xml import -->
+        <!--
+        <file name="admin/model/tool/export.php">
+
+            <operation error="skip">
+                <search position="before">
+                    <![CDATA[
+                        foreach ($products as $product) {
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        $tmp_product_ids = array();
+                    ]]>
+                </add>
+            </operation>
+
+            <operation error="skip">
+                <search position="after">
+                    <![CDATA[
+                        foreach ($products as $product) {
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        $tmp_product_ids[] = $product['product_id'];
+                    ]]>
+                </add>
+            </operation>
+
+            <operation error="skip">
+                <search position="before">
+                    <![CDATA[
+                        // final update commit
+                    ]]>
+                </search>
+                <add>
+                    <![CDATA[
+                        if (count($tmp_product_ids)) {
+                            $waitlist_product_ids_to_save = implode(',', $tmp_product_ids);
+                            $database->query("DELETE FROM `".DB_PREFIX."waitlist` WHERE product_id NOT IN ($waitlist_product_ids_to_save)");
+                        }
+                    ]]>
+                </add>
+            </operation>
+
+        </file>
+        -->
+
+        <!-- model:end -->
+
+    <!-- admin:end -->
+
+</modification>
