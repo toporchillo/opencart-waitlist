@@ -891,15 +891,16 @@
             </operation>
         </file>
 
-        <!-- extendet functions -->
+        <!-- extended functions -->
 
-        <!-- mail notification when product edit -->
+        <!-- mail notification when product edit in product manager -->
+        <!--
         <file name="admin/model/catalog/product_manager.php">
 
             <operation>
                 <search position="after">
                     <![CDATA[
-                    	public function editProduct($product_id, $data) {
+                        public function editProduct($product_id, $data) {
                     ]]>
                 </search>
                 <add>
@@ -914,6 +915,7 @@
             </operation>
 
         </file>
+        -->
 
         <!-- optional: replace cart button on browse page (product filter module) -->
         <!--
