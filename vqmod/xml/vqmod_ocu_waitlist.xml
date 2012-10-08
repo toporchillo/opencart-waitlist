@@ -34,21 +34,6 @@
     <website>http://www.opencart.ua</website>
     <email>support@opencart.ua</email>
 
-    <!-- sql:start -->
-
-        <!-- DB changes:
-
-            CREATE TABLE IF NOT EXISTS `waitlist` (
-              `customer_id` int(11) NOT NULL,
-              `product_id` int(11) NOT NULL,
-              `date_added` datetime NOT NULL,
-              PRIMARY KEY  (`customer_id`,`product_id`)
-            ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
-        -->
-
-    <!-- sql:end -->
-
     <!-- catalog:start -->
 
         <!-- controller:start -->
@@ -428,7 +413,7 @@
 
             <!-- add custom js -->
             <file name="catalog/view/theme/default/template/common/header.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="after">
                         <![CDATA[
                             <script type="text/javascript" src="catalog/view/javascript/common.js"></script>
@@ -446,7 +431,7 @@
 
                 <!-- replace cart button of related products on main product page -->
 
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
                             <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
@@ -471,7 +456,7 @@
                 </operation>
 
                 <!-- replace cart button on main product page -->
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
                             <?php echo $text_qty; ?>
@@ -481,7 +466,7 @@
                         <![CDATA[]]>
                     </add>
                 </operation>
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
                             <input type="text" name="quantity" size="2" value="<?php echo $minimum; ?>" />
@@ -491,7 +476,7 @@
                         <![CDATA[]]>
                     </add>
                 </operation>
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
                             &nbsp;<a id="button-cart" class="button"><span><?php echo $button_cart; ?></span></a>
@@ -520,15 +505,15 @@
 
             <!-- replace cart button on category page -->
             <file name="catalog/view/theme/default/template/product/category.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
-                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                            <input type="button" value="<?php echo $button_cart; ?>" onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button" />
                         ]]>
                     </search>
                     <add>
                         <![CDATA[
-                            <div class="cart">
+
                               <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
                                 <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
                                 <div class="waitlist-add">
@@ -541,7 +526,7 @@
                               <?php } else { ?>
                                 <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
                               <?php } ?>
-                            </div>
+
                         ]]>
                     </add>
                 </operation>
@@ -549,15 +534,14 @@
 
             <!-- replace cart button on manufacturer_info page -->
             <file name="catalog/view/theme/default/template/product/manufacturer_info.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
-                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                            <input type="button" value="<?php echo $button_cart; ?>" onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button" />
                         ]]>
                     </search>
                     <add>
                         <![CDATA[
-                            <div class="cart">
                               <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
                                 <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
                                 <div class="waitlist-add">
@@ -570,7 +554,6 @@
                               <?php } else { ?>
                                 <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
                               <?php } ?>
-                            </div>
                         ]]>
                     </add>
                 </operation>
@@ -578,15 +561,15 @@
 
             <!-- replace cart button on search page -->
             <file name="catalog/view/theme/default/template/product/search.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
-                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                            <input type="button" value="<?php echo $button_cart; ?>" onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button" />
                         ]]>
                     </search>
                     <add>
                         <![CDATA[
-                            <div class="cart">
+
                               <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
                                 <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
                                 <div class="waitlist-add">
@@ -599,7 +582,7 @@
                               <?php } else { ?>
                                 <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
                               <?php } ?>
-                            </div>
+
                         ]]>
                     </add>
                 </operation>
@@ -607,15 +590,15 @@
 
             <!-- replace cart button on special page -->
             <file name="catalog/view/theme/default/template/product/special.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
-                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                            <input type="button" value="<?php echo $button_cart; ?>" onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button" />
                         ]]>
                     </search>
                     <add>
                         <![CDATA[
-                            <div class="cart">
+
                               <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
                                 <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
                                 <div class="waitlist-add">
@@ -628,7 +611,7 @@
                               <?php } else { ?>
                                 <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
                               <?php } ?>
-                            </div>
+
                         ]]>
                     </add>
                 </operation>
@@ -636,7 +619,7 @@
 
             <!-- replace cart button on compare page -->
             <file name="catalog/view/theme/default/template/product/compare.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
                             <td><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></td>
@@ -665,15 +648,14 @@
 
             <!-- replace cart button in bestseller module -->
             <file name="catalog/view/theme/default/template/module/bestseller.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
-                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                            <input type="button" value="<?php echo $button_cart; ?>" onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button" />
                         ]]>
                     </search>
                     <add>
                         <![CDATA[
-                            <div class="cart">
                               <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
                                 <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
                                 <div class="waitlist-add">
@@ -686,7 +668,6 @@
                               <?php } else { ?>
                                 <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
                               <?php } ?>
-                            </div>
                         ]]>
                     </add>
                 </operation>
@@ -694,15 +675,14 @@
 
             <!-- replace cart button in special module -->
             <file name="catalog/view/theme/default/template/module/special.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
-                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                            <input type="button" value="<?php echo $button_cart; ?>" onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button" />
                         ]]>
                     </search>
                     <add>
                         <![CDATA[
-                            <div class="cart">
                               <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
                                 <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
                                 <div class="waitlist-add">
@@ -715,7 +695,6 @@
                               <?php } else { ?>
                                 <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
                               <?php } ?>
-                            </div>
                         ]]>
                     </add>
                 </operation>
@@ -723,15 +702,14 @@
 
             <!-- replace cart button in featured module -->
             <file name="catalog/view/theme/default/template/module/featured.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
-                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                            <input type="button" value="<?php echo $button_cart; ?>" onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button" />
                         ]]>
                     </search>
                     <add>
                         <![CDATA[
-                            <div class="cart">
                               <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
                                 <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
                                 <div class="waitlist-add">
@@ -744,7 +722,6 @@
                               <?php } else { ?>
                                 <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
                               <?php } ?>
-                            </div>
                         ]]>
                     </add>
                 </operation>
@@ -752,15 +729,14 @@
 
             <!-- replace cart button in latest module -->
             <file name="catalog/view/theme/default/template/module/latest.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="replace">
                         <![CDATA[
-                            <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                            <input type="button" value="<?php echo $button_cart; ?>" onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button" />
                         ]]>
                     </search>
                     <add>
                         <![CDATA[
-                            <div class="cart">
                               <?php if (!$product['quantity'] && $waitlist_enabled) { ?>
                                 <div class="waitlist-not-available"><?php echo $text_not_available;?></div>
                                 <div class="waitlist-add">
@@ -773,7 +749,6 @@
                               <?php } else { ?>
                                 <a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a>
                               <?php } ?>
-                            </div>
                         ]]>
                     </add>
                 </operation>
@@ -781,7 +756,7 @@
 
             <!-- add waitlist link to account page -->
             <file name="catalog/view/theme/default/template/account/account.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="after">
                         <![CDATA[
                             <li><a href="<?php echo $wishlist; ?>"><?php echo $text_wishlist; ?></a></li>
@@ -799,7 +774,7 @@
 
             <!-- add waitlist link to account module -->
             <file name="catalog/view/theme/default/template/module/account.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="after">
                         <![CDATA[
                             <li><a href="<?php echo $wishlist; ?>"><?php echo $text_wishlist; ?></a></li>
@@ -817,7 +792,7 @@
 
             <!-- add waitlist link to main footer -->
             <file name="catalog/view/theme/default/template/common/footer.tpl">
-                <operation error="skip">
+                <operation>
                     <search position="after">
                         <![CDATA[
                             <li><a href="<?php echo $wishlist; ?>"><?php echo $text_wishlist; ?></a></li>
@@ -947,10 +922,10 @@
         </file>
 
         <file name="catalog/view/theme/default/template/product/browse.tpl">
-            <operation error="skip">
+            <operation>
                 <search position="replace">
                     <![CDATA[
-                        <div class="cart"><a onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button"><span><?php echo $button_cart; ?></span></a></div>
+                        <input type="button" value="<?php echo $button_cart; ?>" onclick="addToCart('<?php echo $product['product_id']; ?>');" class="button" />
                     ]]>
                 </search>
                 <add>
@@ -979,7 +954,7 @@
         <!--
         <file name="admin/model/tool/leftover.php">
 
-            <operation error="skip">
+            <operation>
                 <search position="after">
                     <![CDATA[
                         function productsUpdate( $database, $products ) {
@@ -992,7 +967,7 @@
                 </add>
             </operation>
 
-            <operation error="skip">
+            <operation>
                 <search position="before">
                     <![CDATA[
                         $database->query("UPDATE `".DB_PREFIX."product` SET quantity = '{$this->quantity}' WHERE model = '{$product['model']}' AND supplier = '{$this->supplier}' LIMIT 1");
@@ -1019,7 +994,7 @@
         <!--
         <file name="admin/model/tool/export.php">
 
-            <operation error="skip">
+            <operation>
                 <search position="before">
                     <![CDATA[
                         $sql .= "DELETE FROM `".DB_PREFIX."product`;\n";
@@ -1045,7 +1020,7 @@
         <!--
         <file name="admin/model/tool/export.php">
 
-            <operation error="skip">
+            <operation>
                 <search position="before">
                     <![CDATA[
                         foreach ($products as $product) {
@@ -1058,7 +1033,7 @@
                 </add>
             </operation>
 
-            <operation error="skip">
+            <operation>
                 <search position="after">
                     <![CDATA[
                         foreach ($products as $product) {
@@ -1071,7 +1046,7 @@
                 </add>
             </operation>
 
-            <operation error="skip">
+            <operation>
                 <search position="before">
                     <![CDATA[
                         // final update commit
