@@ -28,7 +28,7 @@
  */
 
 // Heading
-$_['heading_title'] = 'Wait List Settings';
+$_['heading_title'] = 'OCU Waitlist';
 
 // Tabs
 $_['tab_subscribers'] = 'Subscribe List';
