@@ -109,4 +109,25 @@ class ModelToolWaitlist extends Model {
     {
         $this->db->query("DELETE FROM " . DB_PREFIX . "waitlist WHERE customer_id = '" . (int) $customer_id . "'");
     }
+
+    public function getProductIds()
+    {
+        $result = $this->db->query("SELECT DISTINCT * FROM " . DB_PREFIX . "waitlist GROUP BY product_id ORDER BY date_added");
+
+        return $result->rows;
+    }
+
+    public function getCustomersByProductId($product_id)
+    {
+        $result = $this->db->query("SELECT customer_id FROM " . DB_PREFIX . "waitlist WHERE product_id = '" . (int) $product_id . "'");
+
+        return $result->rows;
+    }
+
+    public function getSubscribeDate($product_id, $customer_id)
+    {
+        $result = $this->db->query("SELECT date_added FROM " . DB_PREFIX . "waitlist WHERE product_id = '" . (int) $product_id . "' AND customer_id = '" . (int) $customer_id . "' LIMIT 1");
+
+        return $result->row['date_added'];
+    }
 }

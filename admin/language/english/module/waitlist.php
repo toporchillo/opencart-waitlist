@@ -30,11 +30,24 @@
 // Heading
 $_['heading_title'] = 'Wait List Settings';
 
+// Tabs
+$_['tab_subscribers'] = 'Subscribe List';
+$_['tab_settings'] = 'Settings';
+
 // Text
 $_['text_module'] = 'Modules';
 $_['text_success'] = 'Wait List settings saved!';
 $_['text_yes'] = 'Yes';
 $_['text_no'] = 'No';
+
+$_['text_product'] = 'Product';
+$_['text_quantity'] = 'Quantity';
+$_['text_available'] = 'Available';
+$_['text_status'] = 'Status';
+$_['text_subscribers'] = 'Subscribers';
+$_['text_product_on'] = 'Enabled';
+$_['text_product_off'] = 'Disabled';
+$_['text_empty'] = 'At the moment, there are no active subscriptions.';
 
 // Entry
 $_['entry_enabled'] = 'Enabled';
